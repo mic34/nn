@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroDraw — Neural Network Digit Recognizer</title>
+    <meta name="description"
+        content="Draw a number, watch the neural network think. An interactive ML visualization game.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/correction.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1 class="title">
+                <span class="title-icon">🧠</span>
+                NeuroDraw
+            </h1>
+            <p class="subtitle">Draw a digit, watch the AI think</p>
+        </header>
+
+        <!-- Game Stats & Modes -->
+        <section class="game-bar">
+            <div class="game-modes">
+                <button class="mode-btn active" data-mode="free">Free Play</button>
+                <button class="mode-btn" data-mode="time">Time Attack</button>
+                <button class="mode-btn" data-mode="challenge">Challenge</button>
+            </div>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Score</span>
+                    <span class="stat-value" id="scoreValue">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Streak</span>
+                    <span class="stat-value" id="streakValue">0</span>
+                </div>
+                <div class="stat-item" id="timerStat" style="display: none;">
+                    <span class="stat-label">Time</span>
+                    <span class="stat-value" id="timerValue">60s</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenge Prompt (Hidden by default) -->
+        <div class="challenge-prompt" id="challengePrompt" style="display: none;">
+            Draw a <span id="targetDigit" class="target-digit">?</span>
+        </div>
+
+        <!-- Prediction Result Section -->
+        <section class="prediction-section">
+            <div class="prediction-display" id="predictionDisplay">
+                <div class="prediction-label">Prediction</div>
+                <div class="prediction-value" id="predictionValue">?</div>
+                <div class="prediction-confidence" id="predictionConfidence">Draw a digit to start</div>
+            </div>
+            <div class="output-layer" id="outputLayer">
+                <!-- Output nodes 0-9 will be rendered here -->
+            </div>
+        </section>
+
+        <!-- Neural Network Visualization Section -->
+        <section class="network-section">
+            <canvas id="networkCanvas"></canvas>
+            <div class="network-legend">
+                <span class="legend-item"><span class="legend-dot input"></span> Input (784)</span>
+                <span class="legend-item"><span class="legend-dot hidden"></span> Hidden (64)</span>
+                <span class="legend-item"><span class="legend-dot output"></span> Output (10)</span>
+            </div>
+        </section>
+
+        <!-- Drawing Canvas Section -->
+        <section class="draw-section">
+            <div class="canvas-wrapper">
+                <canvas id="drawCanvas" width="280" height="280"></canvas>
+                <div class="canvas-grid" id="canvasGrid"></div>
+            </div>
+            <div class="controls">
+                <button id="clearBtn" class="btn btn-secondary">
+                    <span class="btn-icon">🗑️</span>
+                    Clear
+                </button>
+                <button id="predictBtn" class="btn btn-primary">
+                    <span class="btn-icon">🔮</span>
+                    Predict
+                </button>
+                <button id="weightsBtn" class="btn btn-tertiary">
+                    <span class="btn-icon">⚡</span>
+                    Weights
+                </button>
+            </div>
+        </section>
+
+        <!-- Info Panel -->
+        <section class="info-section">
+            <div class="info-card">
+                <h3>How it works</h3>
+                <p>Draw any digit (0-9) on the canvas. The neural network processes your drawing through 784 input
+                    neurons, 64 hidden neurons, and outputs probabilities for each digit.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/model.js"></script>
+    <script src="js/network.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
