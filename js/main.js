@@ -81,7 +81,7 @@ const App = {
             return;
         }
 
-        this.drawCtx = this.drawCanvas.getContext('2d');
+        this.drawCtx = this.drawCanvas.getContext('2d', { willReadFrequently: true });
 
         // Set canvas properties
         this.drawCtx.lineCap = 'round';

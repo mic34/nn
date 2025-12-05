@@ -9,8 +9,9 @@
         content="Draw a number, watch the neural network think. An interactive ML visualization game.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/correction.css">
+    <link rel="stylesheet" href="css/game.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+    <script src="mnist_brain/dist/build.js"></script>
 </head>
 
 <body>
@@ -58,6 +59,23 @@
                 <div class="prediction-label">Prediction</div>
                 <div class="prediction-value" id="predictionValue">?</div>
                 <div class="prediction-confidence" id="predictionConfidence">Draw a digit to start</div>
+
+                <!-- Correction UI -->
+                <div class="correction-panel" id="correctionPanel" style="display: none;">
+                    <p class="correction-label">Wrong? Correct it:</p>
+                    <div class="correction-buttons">
+                        <button class="btn-correct" data-digit="0">0</button>
+                        <button class="btn-correct" data-digit="1">1</button>
+                        <button class="btn-correct" data-digit="2">2</button>
+                        <button class="btn-correct" data-digit="3">3</button>
+                        <button class="btn-correct" data-digit="4">4</button>
+                        <button class="btn-correct" data-digit="5">5</button>
+                        <button class="btn-correct" data-digit="6">6</button>
+                        <button class="btn-correct" data-digit="7">7</button>
+                        <button class="btn-correct" data-digit="8">8</button>
+                        <button class="btn-correct" data-digit="9">9</button>
+                    </div>
+                </div>
             </div>
             <div class="output-layer" id="outputLayer">
                 <!-- Output nodes 0-9 will be rendered here -->
