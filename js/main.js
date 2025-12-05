@@ -409,7 +409,7 @@ const App = {
         }
 
         // Run neural network prediction
-        const result = NeuralNetwork.predict(imageData);
+        const result = NeuralNetwork.verify(imageData);
 
         // Update UI
         this.updatePrediction(result);

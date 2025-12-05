@@ -93,6 +93,102 @@ const NeuralNetwork = {
     },
 
     /**
+     * Verify prediction with Test Time Augmentation (TTA)
+     * Runs prediction 100 times with variations to ensure robustness
+     */
+    verify(inputData) {
+        const variations = this.augmentInput(inputData);
+        const votes = new Array(100).fill(0);
+
+        // Run prediction on all variations
+        variations.forEach(data => {
+            // Use window.nn directly to avoid side effects on this.activations during voting
+            if (window.nn) {
+                const output = window.nn(Array.from(data));
+                let maxProb = 0;
+                let prediction = 0;
+                for (let i = 0; i < 100; i++) {
+                    if (output[i] > maxProb) {
+                        maxProb = output[i];
+                        prediction = i;
+                    }
+                }
+                votes[prediction]++;
+            }
+        });
+
+        // Find winner
+        let winner = 0;
+        let maxVotes = 0;
+        for (let i = 0; i < 100; i++) {
+            if (votes[i] > maxVotes) {
+                maxVotes = votes[i];
+                winner = i;
+            }
+        }
+
+        // Run one final standard predict() on the original data 
+        // to update the UI/activations correctly
+        const finalResult = this.predict(inputData);
+
+        // Override the prediction and confidence with our verified results
+        return {
+            ...finalResult,
+            prediction: winner,
+            confidence: maxVotes / variations.length, // Consensus score (e.g. 0.8)
+            isVerified: true
+        };
+    },
+
+    /**
+     * Generate variations of the input data for TTA
+     */
+    augmentInput(inputData) {
+        const variations = [];
+        const size = 28;
+
+        // 1. Original
+        variations.push(inputData);
+
+        // Helper to shift image
+        const shift = (dx, dy) => {
+            const shifted = new Float32Array(inputData.length);
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const newX = x + dx;
+                    const newY = y + dy;
+                    if (newX >= 0 && newX < size && newY >= 0 && newY < size) {
+                        shifted[y * size + x] = inputData[newY * size + newX];
+                    }
+                }
+            }
+            return shifted;
+        };
+
+        // 2-9. Add 8 directional shifts
+        // (-1,-1) (0,-1) (1,-1)
+        // (-1, 0)        (1, 0)
+        // (-1, 1) (0, 1) (1, 1)
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                if (dx === 0 && dy === 0) continue;
+                variations.push(shift(dx, dy));
+            }
+        }
+
+        // 10. Add a noisy version
+        const noisy = new Float32Array(inputData.length);
+        for (let i = 0; i < inputData.length; i++) {
+            // Add slight noise but clamp to 0-1
+            let val = inputData[i] + (Math.random() * 0.2 - 0.1);
+            noisy[i] = Math.max(0, Math.min(1, val));
+        }
+        variations.push(noisy);
+
+        return variations;
+    },
+
+    /**
      * Train on a single example provided by user
      * NOT SUPPORTED with the pre-compiled Brain.js model
      */
